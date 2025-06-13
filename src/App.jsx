@@ -5,10 +5,22 @@ function App() {
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState("All");
 
-  // Function to add a new task
+
+
+  useEffect(() => {
+    // Load tasks from localStorage when the component mounts
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    }
+  }, []);
+
+    // Function to add a new task
   function addTask() {
     if (newTask.trim() != "") {
       setTasks([...tasks, { id: Date.now(), text: newTask, completed: false }]);
+      localStorage.setItem("tasks",JSON.stringify(tasks));
+      console.log(localStorage.getItem("tasks"));
       setNewTask("");
     }
   }
@@ -24,6 +36,7 @@ function App() {
   // Function to delete a task
   const deleteTask = (id) => {
     setTasks(tasks.filter((task) => id != task.id));
+    localStorage.setItem("tasks",JSON.stringify(tasks));
   };
 
   // Function to filter tasks based on status
@@ -91,7 +104,7 @@ const filteredTasks =
             Pending
           </label>
           </div>
-        <ul className="mx-auto w-2/3 flex flex-col justify-center ">
+        <ul className="mx-auto w-2/3 flex flex-col justify-evenly ">
           {filteredTasks.map((task) => (
             <li
               className="mt-2 bg-blue-500 flex justify-around p-2 rounded-2xl"
@@ -109,7 +122,7 @@ const filteredTasks =
               >
                 {task.text}
               </span>
-              <button onClick={() => deleteTask(task.id)}>Delete</button>
+              <button className="bg-red-500 rounded-2xl text-white p-1" onClick={() => deleteTask(task.id)}>Delete</button>
             </li>
           ))}
         </ul>
